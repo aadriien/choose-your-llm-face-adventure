@@ -1,16 +1,54 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount } from "svelte";
+    import * as faceapi from "face-api.js";
 
     let videoElement;
+    let detections = null;
+
+    let scareSuccess = false;
+    const targetExpression = "happy"; // test run
+    const successThreshold = 0.7;
+
+    async function loadModels() {
+        const MODEL_URL = "/models";
+
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+    }
+
+    async function startVideo() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoElement.srcObject = stream;
+            await videoElement.play();
+        } catch (err) {
+            alert("Could not access webcam: " + err.message);
+        }
+    }
+
+    async function detectExpressions() {
+        if (!videoElement) return;
+
+        const options = new faceapi.TinyFaceDetectorOptions();
+
+        const result = await faceapi.detectSingleFace(videoElement, options).withFaceExpressions();
+        detections = result?.expressions || null;
+
+        if (detections) {
+            if (detections[targetExpression] >= successThreshold) {
+                scareSuccess = true;
+            } else {
+                scareSuccess = false;
+            }
+            console.log("Detected expressions:", detections);
+        }
+    }
 
     onMount(async () => {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoElement.srcObject = stream;
-        await videoElement.play();
-    } catch (err) {
-        alert('Could not access webcam: ' + err.message);
-    }
+        await loadModels();
+        await startVideo();
+
+        setInterval(detectExpressions, 200);
     });
 
     let currentMonster = "/monster-test.png";
@@ -19,21 +57,83 @@
 <main>
     <h1>👹 Monster Scare School 😈</h1>
     <p>Try to mimic this monster's face!</p>
-    <img src={currentMonster} alt="Monster Face" width="300" />
 
-    <h2>Your webcam</h2>
-    <video bind:this={videoElement} autoplay playsinline width="300" />
+    <div class="scare-row">
+        <img src={currentMonster} alt="Monster Face" />
+        <video bind:this={videoElement} autoplay playsinline />
+    
+        <div class="expression-box">
+            <h2>Detected expressions:</h2>
+                {#if detections}
+                    <ul>
+                        {#each Object.entries(detections) as [expression, score]}
+                        <li>{expression}: {score.toFixed(2)}</li>
+                        {/each}
+                    </ul>
+                {/if}
+        </div>
+    </div>
+
+    <h2 class:visible={scareSuccess} class:hidden={!scareSuccess}>
+        🎉 You nailed the scare! 👻
+    </h2>
+    
 </main>
 
 <style>
     main {
         text-align: center;
-        margin-top: 3rem;
         font-family: system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
     }
-    video {
-        margin-top: 1rem;
+    .scare-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        width: 90%;
+        max-width: 90%;
+        padding: 0 2rem;
+        box-sizing: border-box;
+    }
+
+    .scare-row > * {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    img,
+    video,
+    .expression-box {
+        width: 430px;
+        height: auto;
+        min-height: 8rem;
         border: 2px solid #666;
         border-radius: 8px;
+        object-fit: contain;
+        text-align: center;
     }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    h2.hidden {
+        visibility: hidden;
+        height: 1.5em;
+        margin: 0;
+    }
+    h2.visible {
+        color: green;
+    }
+
 </style>
+
+
