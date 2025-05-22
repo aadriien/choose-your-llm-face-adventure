@@ -84,7 +84,7 @@
         setInterval(() => {
             detectExpressions();
             drawLandmarks(); 
-        }, 200);
+        }, 100);
     });
 
     let currentMonster = "/monster-test.png";
@@ -149,6 +149,7 @@
     }
 
     img,
+    .video-container,
     .expression-box {
         width: 430px;
         height: auto;
@@ -175,8 +176,6 @@
 
     .video-container {
         position: relative;
-        width: 430px;
-        height: auto;
     }
 
     .video-container video,
@@ -186,7 +185,6 @@
         left: 0;
         width: 100%;
         height: auto;
-        border: 2px solid #666;
         border-radius: 8px;
     }
 
