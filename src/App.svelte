@@ -3,9 +3,11 @@
     import * as faceapi from "face-api.js";
 
     let videoElement;
-    let detections = null;
+    let overlayCanvas;
 
+    let detections = null;
     let scareSuccess = false;
+
     const targetExpression = "happy"; // test run
     const successThreshold = 0.7;
 
@@ -14,6 +16,7 @@
 
         await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
         await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
     }
 
     async function startVideo() {
@@ -44,11 +47,44 @@
         }
     }
 
+    async function drawLandmarks() {
+        if (!videoElement || !overlayCanvas) return;
+
+        const displaySize = {
+            width: videoElement.videoWidth,
+            height: videoElement.videoHeight
+        };
+
+        // Match canvas size to video size
+        faceapi.matchDimensions(overlayCanvas, displaySize);
+
+        const options = new faceapi.TinyFaceDetectorOptions();
+        const detectionsWithLandmarks = await faceapi
+            .detectAllFaces(videoElement, options)
+            .withFaceLandmarks();
+
+        const resizedResults = faceapi.resizeResults(detectionsWithLandmarks, displaySize);
+
+        const context = overlayCanvas.getContext("2d");
+        context.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+
+        faceapi.draw.drawDetections(overlayCanvas, resizedResults);
+        faceapi.draw.drawFaceLandmarks(overlayCanvas, resizedResults);
+    }
+
     onMount(async () => {
         await loadModels();
         await startVideo();
 
-        setInterval(detectExpressions, 200);
+        videoElement.addEventListener("play", () => {
+            overlayCanvas.width = videoElement.videoWidth;
+            overlayCanvas.height = videoElement.videoHeight;
+        });
+
+        setInterval(() => {
+            detectExpressions();
+            drawLandmarks(); 
+        }, 200);
     });
 
     let currentMonster = "/monster-test.png";
@@ -60,7 +96,11 @@
 
     <div class="scare-row">
         <img src={currentMonster} alt="Monster Face" />
-        <video bind:this={videoElement} autoplay playsinline />
+
+        <div class="video-container">
+            <video bind:this={videoElement} autoplay playsinline />
+            <canvas bind:this={overlayCanvas}></canvas>
+        </div>
     
         <div class="expression-box">
             <h2>Detected expressions:</h2>
@@ -109,7 +149,6 @@
     }
 
     img,
-    video,
     .expression-box {
         width: 430px;
         height: auto;
@@ -132,6 +171,23 @@
     }
     h2.visible {
         color: green;
+    }
+
+    .video-container {
+        position: relative;
+        width: 430px;
+        height: auto;
+    }
+
+    .video-container video,
+    .video-container canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        border: 2px solid #666;
+        border-radius: 8px;
     }
 
 </style>
