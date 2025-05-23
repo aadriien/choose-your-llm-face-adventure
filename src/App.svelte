@@ -8,8 +8,8 @@
     let detections = null;
     let scareSuccess = false;
 
-    const targetExpression = "happy"; // test run
-    const successThreshold = 0.7;
+    let monsterImage = null;
+    let monsterExpressions = null;
 
     async function loadModels() {
         const MODEL_URL = "/models";
@@ -29,23 +29,61 @@
         }
     }
 
-    async function detectExpressions() {
+
+    async function detectMonsterExpressions() {
+        if (!currentMonster) return;
+
+        // Create a fresh image element
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = currentMonster;
+
+        // Wait for it to load
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+        });
+
+        console.log("Monster image loaded for expression detection");
+
+        const options = new faceapi.TinyFaceDetectorOptions();
+        const detection = await faceapi
+            .detectSingleFace(img, options)
+            .withFaceExpressions();
+
+        if (detection) {
+            monsterExpressions = detection.expressions;
+            console.log("Monster expressions loaded:", monsterExpressions);
+        } else {
+            console.warn("No face detected in monster image");
+        }
+    }
+
+
+    function cosineSimilarity(a, b) {
+        const keys = Object.keys(a);
+        const dot = keys.reduce((sum, k) => sum + a[k] * b[k], 0);
+        const magA = Math.sqrt(keys.reduce((sum, k) => sum + a[k] * a[k], 0));
+        const magB = Math.sqrt(keys.reduce((sum, k) => sum + b[k] * b[k], 0));
+        return dot / (magA * magB);
+    }
+
+    async function checkMimickedFace() {
         if (!videoElement) return;
 
         const options = new faceapi.TinyFaceDetectorOptions();
-
         const result = await faceapi.detectSingleFace(videoElement, options).withFaceExpressions();
+
         detections = result?.expressions || null;
 
-        if (detections) {
-            if (detections[targetExpression] >= successThreshold) {
-                scareSuccess = true;
-            } else {
-                scareSuccess = false;
-            }
-            console.log("Detected expressions:", detections);
+        if (detections && monsterExpressions) {
+            const userExpr = detections.expressions;
+            const similarity = cosineSimilarity(userExpr, monsterExpressions);
+            scareSuccess = similarity > 0.9;
+            // console.log("Expression similarity:", similarity);
         }
     }
+
 
     async function drawLandmarks() {
         if (!videoElement || !overlayCanvas) return;
@@ -75,6 +113,7 @@
     onMount(async () => {
         await loadModels();
         await startVideo();
+        await detectMonsterExpressions();
 
         videoElement.addEventListener("play", () => {
             overlayCanvas.width = videoElement.videoWidth;
@@ -82,12 +121,13 @@
         });
 
         setInterval(() => {
-            detectExpressions();
             drawLandmarks(); 
+            checkMimickedFace();
         }, 100);
     });
 
-    let currentMonster = "/monster-test.png";
+    // let currentMonster = "/monster-test.png";
+    let currentMonster = "https://t3.ftcdn.net/jpg/02/22/85/16/360_F_222851624_jfoMGbJxwRi5AWGdPgXKSABMnzCQo9RN.jpg";
 </script>
 
 <main>
@@ -95,10 +135,11 @@
     <p>Try to mimic this monster's face!</p>
 
     <div class="scare-row">
-        <img src={currentMonster} alt="Monster Face" />
+        <img bind:this={monsterImage} src={currentMonster} alt="Monster Face" />
 
         <div class="video-container">
-            <video bind:this={videoElement} autoplay playsinline />
+            <!-- svelte-ignore a11y-media-has-caption -->
+            <video bind:this={videoElement} autoplay playsinline></video>
             <canvas bind:this={overlayCanvas}></canvas>
         </div>
     
