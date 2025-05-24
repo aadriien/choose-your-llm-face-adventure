@@ -3,7 +3,7 @@
     import * as faceapi from "face-api.js";
 
     export let detections;
-
+    
     let videoElement;
     let overlayCanvas;
 
