@@ -3,7 +3,7 @@
     import * as faceapi from "face-api.js";
 
     export let detections;
-    
+
     let videoElement;
     let overlayCanvas;
 
@@ -112,7 +112,7 @@
         justify-content: center;
         align-items: flex-start;
         height: auto;
-        gap: 2rem;
+        gap: 1rem;
     }
 
     .video-container,

@@ -1,15 +1,19 @@
 <script>
     import { onMount } from "svelte";
     import FaceDetection from "./FaceDetection.svelte";
-    import LLMQuery from "./LLMQuery.svelte";
-    import { fetchTextLLM } from "./LLMQuery.svelte"; 
+    import LLMQuery, { fetchTextLLM, fetchImageLLM } from "./LLMQuery.svelte"; 
+    import ImageDisplay from "./ImageDisplay.svelte";
     
     let userPrompt = "Start the choose your adventure story! But keep it brief. Don't provide options yet; just set the scene. Only return the story in your message.";
+    
     let story = "";
+    let imageUrl = "";
+
     let detections = {};
     
     onMount(async () => {
         story = await fetchTextLLM(userPrompt);
+        imageUrl = await fetchImageLLM(story);
     });
     
     $: if (story && detections) {
@@ -19,12 +23,28 @@
 </script>
 
 <main>
-    <LLMQuery prompt={userPrompt} />
+    <!-- <LLMQuery prompt={userPrompt} /> -->
 
-    <!-- <h2>Story Result:</h2>
-    <p>{story}</p> -->
+    <h2>Story Result:</h2>
+    <p>{story}</p>
     
-    <FaceDetection bind:detections />
+    <div class="face-row">
+        <ImageDisplay {imageUrl} />
+        <FaceDetection bind:detections />
+    </div>
 </main>
 
+
+<style>
+    .face-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        height: auto;
+        gap: 1rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+</style>
 

@@ -23,25 +23,30 @@
         
         const URL_BASE = "https://text.pollinations.ai/openai";
         
-        const response = await fetch(URL_BASE, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`LLM error ${response.status}: ${errorText}`);
+        try {
+            const response = await fetch(URL_BASE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`LLM error ${response.status}: ${errorText}`);
+            }
+            
+            const result = await response.json();
+            return result.choices[0].message.content;
+        } catch (error) {
+            console.error("Text fetch error:", error);
+            return ""; // Return empty string on error
         }
-        
-        const result = await response.json();
-        return result.choices[0].message.content;
     }
     
     export async function fetchImageLLM(prompt, params = {}) {
         const IMAGE_PARAMS = {
-            width: 960,
-            height: 720,
+            width: 512,
+            height: 384,
             private: "true",
             nologo: "true",
             safe: "true"
@@ -54,13 +59,21 @@
         const url = `${urlBase}/${encodedPrompt}?${queryParams.toString()}`;
         console.log("Fetching image from:", url);
         
-        const response = await fetch(url);
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Image fetch error ${response.status}: ${errorText}`);
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error ${response.status}: ${errorText}`);
+            }
+
+            const imageBlob = await response.blob();
+            return URL.createObjectURL(imageBlob);
+
+        } catch (error) {
+            console.error("Image fetch error:", error);
+            return ""; // Return empty string on error
         }
-        const imageBlob = await response.blob();
-        return URL.createObjectURL(imageBlob);
     }
 </script>
 
@@ -72,20 +85,20 @@
     let imageError = "";
     
     // Whenever prompt changes, fetch story, then corresponding image
-    $: if (prompt) {
-        (async () => {
-            try {
-                result = await fetchTextLLM(prompt);
-                imageUrl = await fetchImageLLM(result);
-                imageError = "";
-            } catch (err) {
-                console.error(err);
-                imageError = err.message || "Error fetching data";
-                result = "";
-                imageUrl = "";
-            }
-        })();
-    }
+    // $: if (prompt) {
+    //     (async () => {
+    //         try {
+    //             result = await fetchTextLLM(prompt);
+    //             imageUrl = await fetchImageLLM(result);
+    //             imageError = "";
+    //         } catch (err) {
+    //             console.error(err);
+    //             imageError = err.message || "Error fetching data";
+    //             result = "";
+    //             imageUrl = "";
+    //         }
+    //     })();
+    // }
 </script>
 
 
@@ -98,13 +111,13 @@
         <p>{result}</p>
     </div>
     
-    <h3>Generated Image:</h3>
+    <!-- <h3>Generated Image:</h3>
     {#if imageUrl}
         <img src={imageUrl} alt="Generated" loading="lazy" style="max-width: 100%;" />
     {:else if imageError}
         <p>{imageError}</p>
     {:else}
         <p>Loading image...</p>
-    {/if}
+    {/if} -->
 </main>
 
