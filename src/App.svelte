@@ -4,7 +4,7 @@
     import LLMQuery from "./components/LLMQuery.svelte";
 
     let detections = {};
-    let userPrompt = "What's the scariest monster in folklore? Keep your answer brief.";
+    let userPrompt = "Start the choose your adventure story! But keep it brief. Don't provide options yet; just set the scene. Only return the story in your message.";
 
 </script>
 

@@ -2,15 +2,22 @@
     export let prompt;
     let result;
 
-    const TEXT_PARAMS = {
-        "model": "mistral",
-        "seed": 1,
-        "private": "true",
-    };
     const URL_BASE = "https://text.pollinations.ai/openai";
 
+    const systemMessage = `
+        You are a master storyteller who likes to keep your audience engaged.
+        You are also narrating a Choose-Your-Adventure style game.
+        This means you build a story around your audience's choices.
+        You provide them with options at each turn, and adjust from there.
+    `;
+
     export async function fetchTextLLM(userPrompt) {
-        const systemMessage = "You are a master storyteller who likes to keep your audience engaged."
+        // Randomized seed for unique storytelling experiences
+        const TEXT_PARAMS = {
+            "model": "mistral",
+            "seed": Math.floor(Math.random() * 100000),
+            "private": "true",
+        };
 
         const payload = {
             ...TEXT_PARAMS,
@@ -57,7 +64,7 @@
 <main>
     <div>
         <h3>Prompt:</h3>
-        <p>{prompt}</p>
+        <p>{systemMessage} {prompt}</p>
         <h3>Result:</h3>
         <p>{result}</p>
     </div>
