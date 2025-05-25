@@ -25,6 +25,9 @@
 <main>
     <!-- <LLMQuery prompt={userPrompt} /> -->
 
+    <h3>Story Prompt:</h3>
+    <p>{userPrompt}</p>
+
     <h2>Story Result:</h2>
     <p>{story}</p>
     

@@ -1,12 +1,16 @@
 <script context="module">
-    export const systemMessage = `
-        You are a master storyteller who likes to keep your audience engaged.
-        You are also narrating a Choose-Your-Adventure style game.
-        This means you build a story around your audience's choices.
-        You provide them with options at each turn, and adjust from there.
-    `;
-    
+    export let prompt;
+    let result = "";
+
+    // Logic for fetching story text
     export async function fetchTextLLM(userPrompt) {
+        const systemMessage = `
+            You are a master storyteller who likes to keep your audience engaged.
+            You are also narrating a Choose-Your-Adventure style game.
+            This means you build a story around your audience's choices.
+            You provide them with options at each turn, and adjust from there.
+        `;
+
         const TEXT_PARAMS = {
             "model": "mistral",
             "seed": Math.floor(Math.random() * 100000),
@@ -43,6 +47,7 @@
         }
     }
     
+    // Logic for fetching story image
     export async function fetchImageLLM(prompt, params = {}) {
         const IMAGE_PARAMS = {
             width: 512,
@@ -77,35 +82,11 @@
     }
 </script>
 
-<script>
-    export let prompt;
-        
-    let result = "";
-    let imageUrl = "";
-    let imageError = "";
-    
-    // Whenever prompt changes, fetch story, then corresponding image
-    // $: if (prompt) {
-    //     (async () => {
-    //         try {
-    //             result = await fetchTextLLM(prompt);
-    //             imageUrl = await fetchImageLLM(result);
-    //             imageError = "";
-    //         } catch (err) {
-    //             console.error(err);
-    //             imageError = err.message || "Error fetching data";
-    //             result = "";
-    //             imageUrl = "";
-    //         }
-    //     })();
-    // }
-</script>
-
 
 <main>
     <div>
         <h3>Prompt:</h3>
-        <p>{systemMessage} {prompt}</p>
+        <p>{prompt}</p>
         
         <h3>Resulting Story:</h3>
         <p>{result}</p>
