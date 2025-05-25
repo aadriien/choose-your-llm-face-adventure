@@ -1,4 +1,4 @@
-<script>
+<script context="module">
     export let prompt;
     let result;
 
@@ -54,7 +54,7 @@
     // When component mounts or prompt changes, fetch text
     $: if (prompt) {
         fetchTextLLM(prompt).then(text => {
-        result = text;
+            result = text;
         });
     }
 
@@ -65,8 +65,8 @@
     <div>
         <h3>Prompt:</h3>
         <p>{systemMessage} {prompt}</p>
-        <h3>Result:</h3>
-        <p>{result}</p>
+        <!-- <h3>Result:</h3>
+        <p>{result}</p> -->
     </div>
 
 </main>

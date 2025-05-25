@@ -13,9 +13,10 @@
     <h1>Choose Your [LLM] Adventure.. Using Your Face!</h1>
     <p>The LLM will write the story. Then it's your job to react! </p>
 
-    <LLMQuery prompt={userPrompt} />
+    <!-- <LLMQuery prompt={userPrompt} /> -->
+    <AdventurePaths />
     <br>
-    <FaceDetection bind:detections />
+    <!-- <FaceDetection bind:detections /> -->
 
 </main>
 
