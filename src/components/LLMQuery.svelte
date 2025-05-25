@@ -1,24 +1,18 @@
 <script context="module">
-    export let prompt;
-    let result;
-
-    const URL_BASE = "https://text.pollinations.ai/openai";
-
-    const systemMessage = `
+    export const systemMessage = `
         You are a master storyteller who likes to keep your audience engaged.
         You are also narrating a Choose-Your-Adventure style game.
         This means you build a story around your audience's choices.
         You provide them with options at each turn, and adjust from there.
     `;
-
+    
     export async function fetchTextLLM(userPrompt) {
-        // Randomized seed for unique storytelling experiences
         const TEXT_PARAMS = {
             "model": "mistral",
             "seed": Math.floor(Math.random() * 100000),
             "private": "true",
         };
-
+        
         const payload = {
             ...TEXT_PARAMS,
             messages: [
@@ -26,38 +20,72 @@
                 { role: "user", content: userPrompt },
             ]
         };
-
-        console.log(payload);
-
-        try {
-            const response = await fetch(URL_BASE, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`LLM error ${response.status}: ${errorText}`);
-            }
-
-            const result = await response.json(); 
-            return result.choices[0].message.content;
-        } catch (err) {
-            console.error("fetchTextLLM error:", err);
-            throw err;
-        }
-    }
-
-    // When component mounts or prompt changes, fetch text
-    $: if (prompt) {
-        fetchTextLLM(prompt).then(text => {
-            result = text;
+        
+        const URL_BASE = "https://text.pollinations.ai/openai";
+        
+        const response = await fetch(URL_BASE, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
         });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`LLM error ${response.status}: ${errorText}`);
+        }
+        
+        const result = await response.json();
+        return result.choices[0].message.content;
     }
+    
+    export async function fetchImageLLM(prompt, params = {}) {
+        const IMAGE_PARAMS = {
+            width: 960,
+            height: 720,
+            private: "true",
+            nologo: "true",
+            safe: "true"
+        };
+        const urlBase = "https://image.pollinations.ai/prompt";
+        
+        const queryParams = new URLSearchParams({ ...IMAGE_PARAMS, ...params });
+        const encodedPrompt = encodeURIComponent(prompt);
+        
+        const url = `${urlBase}/${encodedPrompt}?${queryParams.toString()}`;
+        console.log("Fetching image from:", url);
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Image fetch error ${response.status}: ${errorText}`);
+        }
+        const imageBlob = await response.blob();
+        return URL.createObjectURL(imageBlob);
+    }
+</script>
 
+<script>
+    export let prompt;
+        
+    let result = "";
+    let imageUrl = "";
+    let imageError = "";
+    
+    // Whenever prompt changes, fetch story, then corresponding image
+    $: if (prompt) {
+        (async () => {
+            try {
+                result = await fetchTextLLM(prompt);
+                imageUrl = await fetchImageLLM(result);
+                imageError = "";
+            } catch (err) {
+                console.error(err);
+                imageError = err.message || "Error fetching data";
+                result = "";
+                imageUrl = "";
+            }
+        })();
+    }
 </script>
 
 
@@ -65,10 +93,18 @@
     <div>
         <h3>Prompt:</h3>
         <p>{systemMessage} {prompt}</p>
-        <!-- <h3>Result:</h3>
-        <p>{result}</p> -->
+        
+        <h3>Resulting Story:</h3>
+        <p>{result}</p>
     </div>
-
+    
+    <h3>Generated Image:</h3>
+    {#if imageUrl}
+        <img src={imageUrl} alt="Generated" loading="lazy" style="max-width: 100%;" />
+    {:else if imageError}
+        <p>{imageError}</p>
+    {:else}
+        <p>Loading image...</p>
+    {/if}
 </main>
-    
-    
+

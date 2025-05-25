@@ -21,8 +21,8 @@
 <main>
     <LLMQuery prompt={userPrompt} />
 
-    <h2>Story Result:</h2>
-    <p>{story}</p>
+    <!-- <h2>Story Result:</h2>
+    <p>{story}</p> -->
     
     <FaceDetection bind:detections />
 </main>
