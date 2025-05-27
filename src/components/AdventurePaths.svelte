@@ -3,12 +3,28 @@
     import FaceDetection from "./FaceDetection.svelte";
     import LLMQuery, { fetchTextLLM, fetchImageLLM } from "./LLMQuery.svelte"; 
     import ImageDisplay from "./ImageDisplay.svelte";
+
+    export let storyConfig;
     
     let userPrompt = `
         Start the choose your adventure story! 
         But keep it BRIEF (only 1-2 sentences). 
         Don't provide options yet; just set the scene. 
         Only return the story in your message.
+    `;
+
+    let settingsPrompt = `
+        Here are the settings we're using for this story:
+        —> genre: ${storyConfig.genre} ..
+        —> setting: ${storyConfig.setting} ..
+        —> tone: ${storyConfig.tone} ..
+        —> silliness (scale 1-100, where 100 is VERY silly): 
+            ${storyConfig.sliders.silliness} ..
+        —> creativity (scale 1-100, where 100 is VERY unique): 
+            ${storyConfig.sliders.creativity} ..
+        —> image realism (scale 1-100, where 1 is cartoon-style images): 
+            ${storyConfig.sliders.coziness} ..
+        Use these to guide the vibe of the story!
     `;
     
     let story = "";
@@ -39,8 +55,8 @@
 
         if (firstRun) {
             // Initial story setup, no emotion yet
-            story = await fetchTextLLM(userPrompt);
-            imageUrl = await fetchImageLLM(story);
+            story = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
+            imageUrl = await fetchImageLLM(story + "\n" + settingsPrompt);
 
             // Always maintain story context for LLM
             conversationHistory += story + "\n\n";
@@ -59,8 +75,8 @@
             ${instructions}
         `;
 
-        story = await fetchTextLLM(userPrompt);
-        imageUrl = await fetchImageLLM(story);
+        story = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
+        imageUrl = await fetchImageLLM(story + "\n" + settingsPrompt);
 
         conversationHistory += story + "\n\n";
     }
@@ -80,6 +96,7 @@
     });
 
 </script>
+
 
 <main>
     <!-- <LLMQuery prompt={userPrompt} /> -->

@@ -1,5 +1,13 @@
 <script>
     import AdventurePaths from "./components/AdventurePaths.svelte";
+    import VibeCuration from "./components/VibeCuration.svelte";
+
+    let storyConfig = null;
+
+    function handleStart(event) {
+        // Store chosen configs & trigger story start
+        storyConfig = event.detail;
+    }
 
 </script>
 
@@ -8,7 +16,11 @@
     <h1>Choose Your [LLM] Adventure.. Using Your Face!</h1>
     <p>The LLM will write the story. Then it's your job to react! </p>
 
-    <AdventurePaths />
+    {#if storyConfig === null}
+        <VibeCuration on:start={handleStart} />
+    {:else}
+        <AdventurePaths {storyConfig} />
+    {/if}
 
 </main>
 
