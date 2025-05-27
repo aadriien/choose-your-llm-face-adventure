@@ -4,10 +4,17 @@
     import LLMQuery, { fetchTextLLM, fetchImageLLM } from "./LLMQuery.svelte"; 
     import ImageDisplay from "./ImageDisplay.svelte";
     
-    let userPrompt = "Start the choose your adventure story! But keep it brief. Don't provide options yet; just set the scene. Only return the story in your message.";
+    let userPrompt = `
+        Start the choose your adventure story! 
+        But keep it BRIEF (only 1-2 sentences). 
+        Don't provide options yet; just set the scene. 
+        Only return the story in your message.
+    `;
     
     let story = "";
     let imageUrl = "";
+
+    let conversationHistory = "";
 
     let detections = {};
     let expressionHistory;
@@ -29,6 +36,8 @@
             story = await fetchTextLLM(userPrompt);
             imageUrl = await fetchImageLLM(story);
 
+            conversationHistory += story + "\n";
+
             firstRun = false;
             return;
         }
@@ -36,17 +45,21 @@
         const emotionSummary = await expressionHistory.collectExpressions(5000);
         const formatted = getLLMPrompt(emotionSummary);
 
-        userPrompt = `
+        conversationHistory += `
             The user reacted to the previous scene with these expressions:
             \n${formatted}\n
-            Continue the story accordingly!
-            Remember to keep it BRIEF. The user needs to read it quickly!!
-            Only return the story, nothing else.
-            Do not give any options. Just continue describing the story.
+            What happens next? Keep it BRIEF (only 1-2 sentences).
+            Do not provide options. Do not mention the user. 
+            Just continue the story. Keep it short and interesting.
         `;
+
+        // Always maintain story context
+        userPrompt = conversationHistory;
 
         story = await fetchTextLLM(userPrompt);
         imageUrl = await fetchImageLLM(story);
+
+        conversationHistory += story + "\n";
     }
 
     // When story changes (new text loaded), reset emotion history

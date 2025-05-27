@@ -139,7 +139,7 @@
 
         setInterval(() => {
             drawLandmarks(); 
-        }, 100);
+        }, 80);
 
         startContinuousExpressionTracking();
     });
