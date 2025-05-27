@@ -31,35 +31,38 @@
     }
 
     async function startNextStoryStep() {
+        const instructions = `
+            What happens next? Keep it BRIEF (only 1-2 sentences).
+            Do not provide options. Do not mention the user. 
+            Just continue the story. Keep it short and interesting.
+        `;
+
         if (firstRun) {
             // Initial story setup, no emotion yet
             story = await fetchTextLLM(userPrompt);
             imageUrl = await fetchImageLLM(story);
 
-            conversationHistory += story + "\n";
+            // Always maintain story context for LLM
+            conversationHistory += story + "\n\n";
 
             firstRun = false;
             return;
         }
 
         const emotionSummary = await expressionHistory.collectExpressions(5000);
-        const formatted = getLLMPrompt(emotionSummary);
+        const formattedEmotions = getLLMPrompt(emotionSummary);
 
-        conversationHistory += `
+        userPrompt = `
+            ${conversationHistory}
             The user reacted to the previous scene with these expressions:
-            \n${formatted}\n
-            What happens next? Keep it BRIEF (only 1-2 sentences).
-            Do not provide options. Do not mention the user. 
-            Just continue the story. Keep it short and interesting.
+            \n${formattedEmotions}\n
+            ${instructions}
         `;
-
-        // Always maintain story context
-        userPrompt = conversationHistory;
 
         story = await fetchTextLLM(userPrompt);
         imageUrl = await fetchImageLLM(story);
 
-        conversationHistory += story + "\n";
+        conversationHistory += story + "\n\n";
     }
 
     // When story changes (new text loaded), reset emotion history
