@@ -99,8 +99,6 @@
 
 
 <main>
-    <!-- <LLMQuery prompt={userPrompt} /> -->
-
     <h3>Story Prompt:</h3>
     <p>{userPrompt}</p>
 
