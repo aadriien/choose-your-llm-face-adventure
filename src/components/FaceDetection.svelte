@@ -4,6 +4,9 @@
 
     export let detections;
 
+    let expressionHistory = []; // Each entry is { timestamp, expressions } object
+    let trackingInterval;
+
     let videoElement;
     let overlayCanvas;
 
@@ -22,22 +25,6 @@
             await videoElement.play();
         } catch (err) {
             alert("Could not access webcam: " + err.message);
-        }
-    }
-
-    async function getExpressions() {
-        if (!videoElement) return;
-
-        const options = new faceapi.TinyFaceDetectorOptions();
-        const result = await faceapi
-            .detectSingleFace(videoElement, options)
-            .withFaceExpressions();
-
-        detections = result?.expressions || null;
-
-        if (detections) {
-            const userExpr = detections.expressions;
-
         }
     }
 
@@ -66,6 +53,81 @@
         faceapi.draw.drawFaceLandmarks(overlayCanvas, resizedResults);
     }
 
+    async function getExpressions() {
+        if (!videoElement) return;
+
+        const options = new faceapi.TinyFaceDetectorOptions();
+        const result = await faceapi
+            .detectSingleFace(videoElement, options)
+            .withFaceExpressions();
+
+        detections = result?.expressions || null;
+
+        if (detections) {
+            expressionHistory.push({
+                timestamp: Date.now(),
+                expressions: result.expressions
+            });
+
+            // Keep last 5 sec of emotions
+            const cutoff = Date.now() - 5000; 
+            expressionHistory = expressionHistory.filter(e => e.timestamp >= cutoff);
+        }
+    }
+
+    function summarizeExpressions(history) {
+        const totals = {
+            neutral: 0,
+            happy: 0,
+            sad: 0,
+            angry: 0,
+            fearful: 0,
+            disgusted: 0,
+            surprised: 0
+        };
+        const count = history.length;
+
+        for (const entry of history) {
+            for (const [emotion, value] of Object.entries(entry.expressions)) {
+                totals[emotion] += value;
+            }
+        }
+
+        // Average out each expression over time
+        const averages = {};
+        for (const [emotion, total] of Object.entries(totals)) {
+            averages[emotion] = total / count;
+        }
+
+        console.log("Emotion summary:", averages);
+        return averages;
+    }
+
+    export async function collectExpressions(duration = 5000) {
+        // Reset expressions to start fresh
+        expressionHistory = [];  
+
+        return new Promise((resolve) => {
+            const interval = setInterval(() => {
+                getExpressions();
+            }, 500);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                const summary = summarizeExpressions(expressionHistory);
+                resolve(summary);
+            }, duration);
+        });
+    }
+
+    export function startContinuousExpressionTracking() {
+        if (trackingInterval) clearInterval(trackingInterval);
+
+        trackingInterval = setInterval(() => {
+            getExpressions();
+        }, 500);
+    }
+
     onMount(async () => {
         await loadModels();
         await startVideo();
@@ -77,8 +139,9 @@
 
         setInterval(() => {
             drawLandmarks(); 
-            getExpressions();
         }, 100);
+
+        startContinuousExpressionTracking();
     });
 </script>
 

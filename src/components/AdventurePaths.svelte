@@ -10,16 +10,59 @@
     let imageUrl = "";
 
     let detections = {};
-    
-    onMount(async () => {
+    let expressionHistory;
+
+    let firstRun = true;
+
+    function getLLMPrompt(averages) {
+        const sorted = Object.entries(averages || {}).sort((a, b) => b[1] - a[1]);
+        const top = sorted.slice(0, 3);
+
+        return top.map(([emotion, value]) =>
+            `- ${emotion}: ${(value * 100).toFixed(1)}%`
+        ).join('\n');
+    }
+
+    async function startNextStoryStep() {
+        if (firstRun) {
+            // Initial story setup, no emotion yet
+            story = await fetchTextLLM(userPrompt);
+            imageUrl = await fetchImageLLM(story);
+
+            firstRun = false;
+            return;
+        }
+
+        const emotionSummary = await expressionHistory.collectExpressions(5000);
+        const formatted = getLLMPrompt(emotionSummary);
+
+        userPrompt = `
+            The user reacted to the previous scene with these expressions:
+            \n${formatted}\n
+            Continue the story accordingly!
+            Remember to keep it BRIEF. The user needs to read it quickly!!
+            Only return the story, nothing else.
+            Do not give any options. Just continue describing the story.
+        `;
+
         story = await fetchTextLLM(userPrompt);
         imageUrl = await fetchImageLLM(story);
-    });
-    
-    $: if (story && detections) {
-        // logic to decide if next prompt should be sent
-        // e.g. if user shows "fear", then continue story
     }
+
+    // When story changes (new text loaded), reset emotion history
+    $: if (story) {
+        expressionHistory?.startContinuousExpressionTracking();
+    }
+
+    onMount(() => {
+        startNextStoryStep(); 
+
+        // Every 10 seconds, continue story
+        setInterval(() => {
+            startNextStoryStep();
+        }, 10000);
+    });
+
 </script>
 
 <main>
@@ -33,7 +76,7 @@
     
     <div class="face-row">
         <ImageDisplay {imageUrl} />
-        <FaceDetection bind:detections />
+        <FaceDetection bind:detections bind:this={expressionHistory} />
     </div>
 </main>
 
