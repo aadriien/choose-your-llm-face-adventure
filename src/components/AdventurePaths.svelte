@@ -22,9 +22,16 @@
             ${storyConfig.sliders.silliness} ..
         —> creativity (scale 1-100, where 100 is VERY unique): 
             ${storyConfig.sliders.creativity} ..
-        —> image realism (scale 1-100, where 1 is cartoon-style images): 
-            ${storyConfig.sliders.coziness} ..
-        Use these to guide the vibe of the story!
+        Use these to guide the vibe of the story! 
+    `;
+    
+    let imageRealismPrompt = `
+        When generating images, our image realism scale is as follows:
+        1-100, where 1 is cartoon-style images, and 100 is more realistic.
+        So if the number is below 50, create a CARTOON image, NOT a real one.
+
+        Use this setting (and scale) to create a fun, unique image accordingly:
+        —> image realism: ${storyConfig.sliders.image_realism}
     `;
     
     let story = "";
@@ -56,7 +63,9 @@
         if (firstRun) {
             // Initial story setup, no emotion yet
             story = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
-            imageUrl = await fetchImageLLM(story + "\n" + settingsPrompt);
+            imageUrl = await fetchImageLLM(
+                story + "\n" + settingsPrompt + "\n" + imageRealismPrompt
+            );
 
             // Always maintain story context for LLM
             conversationHistory += story + "\n\n";
@@ -76,7 +85,9 @@
         `;
 
         story = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
-        imageUrl = await fetchImageLLM(story + "\n" + settingsPrompt);
+        imageUrl = await fetchImageLLM(
+            story + "\n" + settingsPrompt + "\n" + imageRealismPrompt
+        );
 
         conversationHistory += story + "\n\n";
     }
