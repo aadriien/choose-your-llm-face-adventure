@@ -117,10 +117,8 @@
 
     .video-container,
     .expression-box {
-        width: 450px;
         height: auto;
         min-height: 8rem;
-        aspect-ratio: 4 / 3;
         border: 2px solid #666;
         border-radius: 8px;
         object-fit: contain;
@@ -129,6 +127,12 @@
 
     .video-container {
         position: relative;
+        width: 450px;
+        aspect-ratio: 4 / 3;
+    }
+
+    .expression-box {
+        width: 300px;
     }
 
     .video-container video,
