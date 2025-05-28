@@ -114,18 +114,30 @@
         <legend>Vibe Check</legend>
         
         <div class="slider-group">
-            <label orient="270deg" before="Low" after="High">Silliness</label>
-            <input type="range" min="0" max="100" bind:value={silliness} orient="270deg" />
+            <label 
+                orient="horizontal" 
+                data-before="grounded fit" 
+                data-after="weird fun"
+            >Silliness</label>
+            <input type="range" min="0" max="100" bind:value={silliness}/>
         </div>
         
         <div class="slider-group">
-            <label orient="270deg" before="Low" after="High">Creativity</label>
-            <input type="range" min="0" max="100" bind:value={creativity} orient="270deg" />
+            <label 
+                orient="horizontal" 
+                data-before="classic feel" 
+                data-after="very unique"
+            >Creativity</label>
+            <input type="range" min="0" max="100" bind:value={creativity} />
         </div>
         
         <div class="slider-group">
-            <label orient="270deg" before="Low" after="High">Image Realism</label>
-            <input type="range" min="0" max="100" bind:value={image_realism} orient="270deg" />
+            <label 
+                orient="horizontal" 
+                data-before="cartoon style" 
+                data-after="natural look"
+            >Image Realism</label>
+            <input type="range" min="0" max="100" bind:value={image_realism} />
         </div>
     </fieldset>
     
@@ -136,7 +148,7 @@
 
 
 <style>
-    @import url('https://fonts.googleapis.com/css?family=Lobster');
+    @import url("https://fonts.googleapis.com/css?family=Lobster");
     
     
     main {
@@ -238,7 +250,7 @@
             -0.22em 0.07em 0 #313131;
     }
     /* Slider itself */
-    input[type='range'] {
+    input[type="range"] {
         display: block;
         margin: 0; padding: 0;
         font-size: inherit;
@@ -255,23 +267,23 @@
         box-shadow: 0 0 0 0 transparent;
         margin-bottom: calc(var(--base-size) * 0.3);
     }
-    input[type='range']:focus {
+    input[type="range"]:focus {
         box-shadow: 0 0 0 calc(var(--base-size) * 0.1) #AAAAAA;
     }
-    input[type='range']:hover {
+    input[type="range"]:hover {
         box-shadow: 0 0 0 calc(var(--base-size) * 0.15) var(--thumb-color);
     }
     /* Slider track */
-    input[type='range']::-webkit-slider-runnable-track,
-    input[type='range']::-moz-range-track,
-    input[type='range']::-ms-track {
+    input[type="range"]::-webkit-slider-runnable-track,
+    input[type="range"]::-moz-range-track,
+    input[type="range"]::-ms-track {
         border: none;
         background: none;
         height: 100%;
         width: 100%;
     }
     /* Slider thumb */
-    input[type='range']::-webkit-slider-thumb {
+    input[type="range"]::-webkit-slider-thumb {
         margin: var(--thumb-margin);
         padding: 0;
         height: var(--thumb-size);
@@ -303,8 +315,7 @@
             calc(9 * var(--box-shadow-offset-unit)) 0 0 0 var(--background-color);
         cursor: ew-resize;
     }
-    
-    input[type='range']::-moz-range-thumb {
+    input[type="range"]::-moz-range-thumb {
         margin: var(--thumb-margin);
         padding: 0;
         height: var(--thumb-size);
@@ -315,8 +326,7 @@
         background-color: var(--thumb-color);
         cursor: ew-resize;
     }
-    
-    input[type='range']::-ms-thumb {
+    input[type="range"]::-ms-thumb {
         margin: var(--thumb-margin);
         padding: 0;
         height: var(--thumb-size);
@@ -328,21 +338,26 @@
         cursor: ew-resize;
     }
     /* Webkit appearance reset */
-    input[type='range'],
-    input[type='range']::-webkit-slider-runnable-track,
-    input[type='range']::-webkit-slider-thumb {
+    input[type="range"],
+    input[type="range"]::-webkit-slider-runnable-track,
+    input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
     }
     /* IE fixes */
-    input[type='range']::-ms-track {
+    input[type="range"]::-ms-track {
         color: transparent;
     }
-    input[type='range']::-ms-fill-lower, 
-    input[type='range']::-ms-fill-upper, 
-    input[type='range']::-ms-tooltip {
+    input[type="range"]::-ms-fill-lower, 
+    input[type="range"]::-ms-fill-upper, 
+    input[type="range"]::-ms-tooltip {
         display: none;
     }
-    /* Label for slider metric */
+    /* Slider metrics */
+    .slider-group {
+        position: relative;
+        width: var(--slider-width);
+        margin-bottom: calc(var(--base-size) * 0.8);
+    }
     .slider-group label {
         display: block;
         font-family: Arial, Helvetica, sans-serif;
@@ -354,8 +369,28 @@
         text-shadow: 
             -0.06em 0.03em 0 #ACE;
     }
-    
-    
+    /* Position before/after text below slider */
+    .slider-group > label::before,
+    .slider-group > label::after {
+        position: absolute;
+        bottom: -1.7em;
+        font-size: 0.5em;
+        font-style: italic;
+        color: #666;
+        text-shadow: none;
+        user-select: none;
+        pointer-events: none;
+    }
+    /* Left side label */
+    .slider-group > label::before {
+        content: attr(data-before);
+    }
+    /* Right side label */
+    .slider-group > label::after {
+        content: attr(data-after);
+        right: 0;
+    }
+
 </style>
 
 
