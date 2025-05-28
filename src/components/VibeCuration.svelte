@@ -25,9 +25,9 @@
         "Magical School", "Talking Animal Village",
         "Miniature Universe", "Mythical Zoo",
         "Awkward Road Trip", "Dream Vacation", 
-        "Dinosaurs on Earth", "Life Across Dimensions",
-        "Superhero Dystopia", "Everything is a Cartoon",
-        "Frogs in Swamps", "Secret Mushroom Society",
+        "Earth With Dinosaurs", "Life Across Dimensions",
+        "Superhero Dystopia", "Cartoon-Drawn World",
+        "Frog-Filled Swamp", "Secret Mushroom Society",
         "Alien Suburbia", "Monster Building Factory",
         "Cheese and Bread Land", "Cloud City",
     ];
@@ -55,6 +55,29 @@
         dispatch("start", storyConfig);
         console.log("Starting story with: ", storyConfig);
     }
+
+    // Make lowercase & add appropriate article for config summary
+    function describeSetting(setting) {
+        if (!setting) return "in some unknown setting.. let's see where you go";
+
+        const trimmed = setting.trim();
+        const lower = trimmed.toLowerCase();
+
+        // Let prepositions or existing phrases pass through as-is
+        if (
+            lower.startsWith("inside") ||
+            lower.startsWith("on") ||
+            lower.startsWith("in")
+        ) {
+            return lower;
+        }
+
+        if (lower.startsWith("the")) return `in ${lower}`;
+
+        // Use 'an' if it starts with a vowel sound
+        const article = /^[aeiou]/.test(lower) ? "an" : "a";
+        return `in ${article} ${lower}`;
+    }
     
 </script>
 
@@ -62,88 +85,105 @@
 <main>
     <h1>Curate Your Story</h1>
 
-    <fieldset class="equalizer">
-        <legend>Story Scene</legend>
+    <div class="configs">
+        <fieldset class="equalizer">
+            <legend>Story Scene</legend>
 
-        <section class="input-group">
-            <label>Genre</label>
-            <input
-                type="text"
-                placeholder="e.g. Sci-fi"
-                bind:value={genre}
-                list="genres-options"
-                name="genre"
-            />
-            <datalist id="genres-options">
-            {#each genres as g}
-                <option value={g} />
-            {/each}
-            </datalist>
-        </section>
+            <section class="input-group">
+                <label>Genre</label>
+                <input
+                    type="text"
+                    placeholder="e.g. Sci-fi"
+                    bind:value={genre}
+                    list="genres-options"
+                    name="genre"
+                />
+                <datalist id="genres-options">
+                {#each genres as g}
+                    <option value={g} />
+                {/each}
+                </datalist>
+            </section>
+            
+            <section class="input-group">
+                <label>Setting</label>
+                <input
+                    type="text"
+                    placeholder="e.g. Hidden Civilization"
+                    bind:value={setting}
+                    list="settings-options"
+                    name="setting"
+                />
+                <datalist id="settings-options">
+                {#each settings as s}
+                    <option value={s} />
+                {/each}
+                </datalist>
+            </section>
         
-        <section class="input-group">
-            <label>Setting</label>
-            <input
-                type="text"
-                placeholder="e.g. Hidden Civilization"
-                bind:value={setting}
-                list="settings-options"
-                name="setting"
-            />
-            <datalist id="settings-options">
-            {#each settings as s}
-                <option value={s} />
-            {/each}
-            </datalist>
-        </section>
-    
-        <section class="input-group">
-            <label>Tone</label>
-            <input
-                type="text"
-                placeholder="e.g. Whimsical"
-                bind:value={tone}
-                list="tones-options"
-                name="tone"
-            />
-            <datalist id="tones-options">
-            {#each tones as t}
-                <option value={t} />
-            {/each}
-            </datalist>
-        </section>
-    </fieldset>
-    
-    <fieldset class="equalizer">
-        <legend>Vibe Check</legend>
+            <section class="input-group">
+                <label>Tone</label>
+                <input
+                    type="text"
+                    placeholder="e.g. Whimsical"
+                    bind:value={tone}
+                    list="tones-options"
+                    name="tone"
+                />
+                <datalist id="tones-options">
+                {#each tones as t}
+                    <option value={t} />
+                {/each}
+                </datalist>
+            </section>
 
-        <div class="slider-group">
-            <label 
-                orient="horizontal" 
-                data-before="grounded fit" 
-                data-after="weird fun"
-            >Silliness</label>
-            <input type="range" min="0" max="100" bind:value={silliness}/>
-        </div>
+            <section class="config-summary">
+                <p>Your story will take place {describeSetting(setting)}!</p>
+                <p>The plot will be filled with 
+                    {genre 
+                    ? 
+                    genre.toLowerCase() + " goodness." 
+                    : 
+                    "interesting new tales."}
+                </p>
+                <p>And don't worry, the mood will stay 
+                    {tone ? tone.toLowerCase() : "engaging throughout"}!
+                </p>
+            </section>
+
+        </fieldset>
         
-        <div class="slider-group">
-            <label 
-                orient="horizontal" 
-                data-before="classic feel" 
-                data-after="very unique"
-            >Creativity</label>
-            <input type="range" min="0" max="100" bind:value={creativity} />
-        </div>
-        
-        <div class="slider-group">
-            <label 
-                orient="horizontal" 
-                data-before="cartoon style" 
-                data-after="natural look"
-            >Image Realism</label>
-            <input type="range" min="0" max="100" bind:value={image_realism} />
-        </div>
-    </fieldset>
+        <fieldset class="equalizer">
+            <legend>Vibe Check</legend>
+
+            <div class="slider-group">
+                <label 
+                    orient="horizontal" 
+                    data-before="grounded fit" 
+                    data-after="weird fun"
+                >Silliness</label>
+                <input type="range" min="0" max="100" bind:value={silliness}/>
+            </div>
+            
+            <div class="slider-group">
+                <label 
+                    orient="horizontal" 
+                    data-before="classic feel" 
+                    data-after="very unique"
+                >Creativity</label>
+                <input type="range" min="0" max="100" bind:value={creativity} />
+            </div>
+            
+            <div class="slider-group">
+                <label 
+                    orient="horizontal" 
+                    data-before="cartoon style" 
+                    data-after="natural look"
+                >Image Realism</label>
+                <input type="range" min="0" max="100" bind:value={image_realism} />
+            </div>
+        </fieldset>
+    </div>
     
     
     <button on:click={startStory}>🚀 Start My Adventure!</button>
@@ -156,7 +196,7 @@
     
     
     main {
-        max-width: 600px;
+        max-width: 1500px;
         margin: 2rem auto;
         padding: 1rem;
         font-family: sans-serif;
@@ -167,15 +207,22 @@
     
     h1 {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .configs {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
     }
     
     .input-group {
         display: flex;          
         align-items: center;   
-        margin-bottom: 1rem;  
+        margin-top: 0.5rem;  
+        margin-bottom: 1rem; 
         gap: 0.5rem;           
-        font-size: 1.7rem;
+        font-size: 1.8rem;
         line-height: 1.8;
         width: 100%;
     }
