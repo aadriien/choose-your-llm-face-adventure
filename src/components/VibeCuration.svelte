@@ -62,57 +62,61 @@
 <main>
     <h1>Curate Your Story</h1>
 
-    <section class="input-group">
-        <label>Genre</label>
-        <input
-            type="text"
-            placeholder="e.g. Sci-fi"
-            bind:value={genre}
-            list="genres-options"
-            name="genre"
-        />
-        <datalist id="genres-options">
-        {#each genres as g}
-            <option value={g} />
-        {/each}
-        </datalist>
-    </section>
-    
-    <section class="input-group">
-        <label>Setting</label>
-        <input
-            type="text"
-            placeholder="e.g. Hidden Civilization"
-            bind:value={setting}
-            list="settings-options"
-            name="setting"
-        />
-        <datalist id="settings-options">
-        {#each settings as s}
-            <option value={s} />
-        {/each}
-        </datalist>
-    </section>
+    <fieldset class="equalizer">
+        <legend>Story Scene</legend>
 
-    <section class="input-group">
-        <label>Tone</label>
-        <input
-            type="text"
-            placeholder="e.g. Whimsical"
-            bind:value={tone}
-            list="tones-options"
-            name="tone"
-        />
-        <datalist id="tones-options">
-        {#each tones as t}
-            <option value={t} />
-        {/each}
-        </datalist>
-    </section>
+        <section class="input-group">
+            <label>Genre</label>
+            <input
+                type="text"
+                placeholder="e.g. Sci-fi"
+                bind:value={genre}
+                list="genres-options"
+                name="genre"
+            />
+            <datalist id="genres-options">
+            {#each genres as g}
+                <option value={g} />
+            {/each}
+            </datalist>
+        </section>
+        
+        <section class="input-group">
+            <label>Setting</label>
+            <input
+                type="text"
+                placeholder="e.g. Hidden Civilization"
+                bind:value={setting}
+                list="settings-options"
+                name="setting"
+            />
+            <datalist id="settings-options">
+            {#each settings as s}
+                <option value={s} />
+            {/each}
+            </datalist>
+        </section>
+    
+        <section class="input-group">
+            <label>Tone</label>
+            <input
+                type="text"
+                placeholder="e.g. Whimsical"
+                bind:value={tone}
+                list="tones-options"
+                name="tone"
+            />
+            <datalist id="tones-options">
+            {#each tones as t}
+                <option value={t} />
+            {/each}
+            </datalist>
+        </section>
+    </fieldset>
     
     <fieldset class="equalizer">
         <legend>Vibe Check</legend>
-        
+
         <div class="slider-group">
             <label 
                 orient="horizontal" 
@@ -167,19 +171,43 @@
     }
     
     .input-group {
-        margin-bottom: 1.5rem;
+        display: flex;          
+        align-items: center;   
+        margin-bottom: 1rem;  
+        gap: 0.5rem;           
+        font-size: 1.7rem;
+        line-height: 1.8;
+        width: 100%;
+    }
+
+    .input-group label {
+        flex-shrink: 0;        
+        width: 4em;    
+        color: #382193;
+        text-shadow: 
+            -0.06em 0.03em 0 #ACE;
+    }
+
+    input[list] {
+        flex-grow: 1;     
+        padding: 0.25em 0.5em;
+        border: 2px solid #ACE;
+        border-radius: 0.5rem;
+        font-size: 1.2rem;
+        line-height: 1.8;
+        height: 1.8em;
+        vertical-align: middle;
+        box-sizing: border-box; 
+    }
+
+    input[list]:focus {
+        border-color: #382193;
+        outline: none;
     }
     
     label {
         display: block;
         font-weight: bold;
-        margin-bottom: 0.25rem;
-    }
-    
-    select, input[type="range"] {
-        width: 100%;
-        padding: 0.4rem;
-        margin-top: 0.2rem;
     }
     
     button {
@@ -205,7 +233,7 @@
         Inspired by `https://codepen.io/long-lazuli/pen/JoLroV`
     */
     :root {
-        --base-size: 3em; /* Adjust to scale size of whole equalizer */
+        --base-size: 2.5em; /* Adjust to scale size of whole equalizer */
         --slider-width: calc(var(--base-size) * 9.9);
         --slider-height: var(--base-size);
         --border-width: calc(var(--base-size) * 0.2);
@@ -265,7 +293,6 @@
         cursor: pointer;
         transition: box-shadow 0.2s linear;
         box-shadow: 0 0 0 0 transparent;
-        margin-bottom: calc(var(--base-size) * 0.3);
     }
     input[type="range"]:focus {
         box-shadow: 0 0 0 calc(var(--base-size) * 0.1) #AAAAAA;
@@ -355,8 +382,8 @@
     /* Slider metrics */
     .slider-group {
         position: relative;
-        width: var(--slider-width);
-        margin-bottom: calc(var(--base-size) * 0.8);
+        width: 100%;
+        margin-bottom: calc(var(--base-size) * 0.7);
     }
     .slider-group label {
         display: block;
@@ -384,11 +411,12 @@
     /* Left side label */
     .slider-group > label::before {
         content: attr(data-before);
+        left: 0.5em;
     }
     /* Right side label */
     .slider-group > label::after {
         content: attr(data-after);
-        right: 0;
+        right: 0.5em;
     }
 
 </style>
