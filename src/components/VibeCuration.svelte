@@ -58,7 +58,7 @@
 
     // Make lowercase & add appropriate article for config summary
     function describeSetting(setting) {
-        if (!setting) return "in some unknown setting.. let's see where you go";
+        if (!setting) return "in some unknown setting";
 
         const trimmed = setting.trim();
         const lower = trimmed.toLowerCase();
@@ -86,8 +86,8 @@
     <h1>Curate Your Story</h1>
 
     <div class="configs">
-        <fieldset class="equalizer">
-            <legend>Story Scene</legend>
+        <fieldset class="story-scene">
+            <legend>The Scene</legend>
 
             <section class="input-group">
                 <label>Genre</label>
@@ -138,22 +138,36 @@
             </section>
 
             <section class="config-summary">
-                <p>Your story will take place {describeSetting(setting)}!</p>
-                <p>The plot will be filled with 
-                    {genre 
-                    ? 
-                    genre.toLowerCase() + " goodness." 
-                    : 
-                    "interesting new tales."}
+                <p>
+                    Your story will take place 
+                    <span class="highlight-config">
+                        {describeSetting(setting)}
+                    </span>...
                 </p>
-                <p>And don't worry, the mood will stay 
-                    {tone ? tone.toLowerCase() : "engaging throughout"}!
+                <p>
+                    The plot will be filled with 
+                    <span class="highlight-config">
+                        {#if genre}
+                            {genre.toLowerCase() + " goodness"}
+                        {:else}
+                            {"interesting new tales"}
+                        {/if}
+                    </span>.
+                </p>
+                <p>
+                    And don't worry, the mood will stay
+                    <span class="highlight-config">
+                        {#if tone}
+                            {tone.toLowerCase()}
+                        {:else}
+                            {"engaging throughout"}
+                        {/if}
+                    </span>! 
                 </p>
             </section>
-
         </fieldset>
         
-        <fieldset class="equalizer">
+        <fieldset class="vibe-check">
             <legend>Vibe Check</legend>
 
             <div class="slider-group">
@@ -193,7 +207,7 @@
 
 <style>
     @import url("https://fonts.googleapis.com/css?family=Lobster");
-    
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;600&display=swap');
     
     main {
         max-width: 1500px;
@@ -210,21 +224,49 @@
         margin-bottom: 1rem;
     }
 
+    .story-scene,
+    .vibe-check {
+        max-width: 50%;
+    }
+
     .configs {
-        display: flex;
+        display: flex;  
+        flex-wrap: wrap;
         justify-content: center;
-        gap: 1rem;
+        gap: 2rem;
+        max-width: 100%;
+    }
+
+    .config-summary {
+        border-top: 3px dotted #55A5E6; 
+        padding-top: 0.7rem;          
+        margin: 1.5rem 0.5rem 0 0.5rem;
+        font-size: 1.3rem;
+        font-family: "Inter", Helvetica, sans-serif;
+        color: #000;
+        display: flex;
+        flex-wrap: wrap;  
+        box-sizing: border-box;
+    }
+
+    .config-summary p {
+        margin: 0.5em 0;
+        line-height: 1.3;
+    }
+
+    .highlight-config {
+        color: #382193;
+        font-weight: bold;
     }
     
     .input-group {
         display: flex;          
         align-items: center;   
-        margin-top: 0.5rem;  
-        margin-bottom: 1rem; 
+        margin: 0.5rem 0.5rem 1rem 0.5rem;
         gap: 0.5rem;           
         font-size: 1.8rem;
         line-height: 1.8;
-        width: 100%;
+        max-width: 100%;
     }
 
     .input-group label {
