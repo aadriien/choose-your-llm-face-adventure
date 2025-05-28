@@ -29,6 +29,7 @@
         "Superhero Dystopia", "Everything is a Cartoon",
         "Frogs in Swamps", "Secret Mushroom Society",
         "Alien Suburbia", "Monster Building Factory",
+        "Cheese and Bread Land", "Cloud City",
     ];
     const tones = [
         "Cheerful", "Comedic",
@@ -60,32 +61,53 @@
 
 <main>
     <h1>Curate Your Story</h1>
-    
+
     <section class="input-group">
         <label>Genre</label>
-        <select bind:value={genre}>
-            {#each genres as g}
-            <option>{g}</option>
-            {/each}
-        </select>
+        <input
+            type="text"
+            placeholder="e.g. Sci-fi"
+            bind:value={genre}
+            list="genres-options"
+            name="genre"
+        />
+        <datalist id="genres-options">
+        {#each genres as g}
+            <option value={g} />
+        {/each}
+        </datalist>
     </section>
     
     <section class="input-group">
         <label>Setting</label>
-        <select bind:value={setting}>
-            {#each settings as s}
-            <option>{s}</option>
-            {/each}
-        </select>
+        <input
+            type="text"
+            placeholder="e.g. Hidden Civilization"
+            bind:value={setting}
+            list="settings-options"
+            name="setting"
+        />
+        <datalist id="settings-options">
+        {#each settings as s}
+            <option value={s} />
+        {/each}
+        </datalist>
     </section>
-    
+
     <section class="input-group">
         <label>Tone</label>
-        <select bind:value={tone}>
-            {#each tones as t}
-            <option>{t}</option>
-            {/each}
-        </select>
+        <input
+            type="text"
+            placeholder="e.g. Whimsical"
+            bind:value={tone}
+            list="tones-options"
+            name="tone"
+        />
+        <datalist id="tones-options">
+        {#each tones as t}
+            <option value={t} />
+        {/each}
+        </datalist>
     </section>
     
     <fieldset class="equalizer">
