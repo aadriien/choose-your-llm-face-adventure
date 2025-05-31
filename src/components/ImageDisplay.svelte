@@ -7,7 +7,7 @@
 <main>
     <div class="image-container">
         {#if imageUrl}
-            <img src={imageUrl} alt={alt} loading="lazy" style="max-width: 100%; height: auto; border-radius: 8px;" />
+            <img src={imageUrl} alt={alt} loading="lazy" />
         {:else}
             <p>Loading image...</p>
         {/if}
@@ -16,6 +16,11 @@
 
 
 <style>
+    img {
+        width: 100%; 
+        height: auto; 
+    }
+
     .image-container {
         width: 100%;
         aspect-ratio: 4 / 3;

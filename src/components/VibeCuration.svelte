@@ -83,7 +83,8 @@
 
 
 <main>
-    <h1>Curate Your Story</h1>
+    <h1>Choose Your [LLM] Adventure.. Using Your Face!</h1>
+    <p>The LLM will write the story. Then it's your job to react! </p>
 
     <div class="configs">
         <fieldset class="story-scene">
@@ -210,8 +211,7 @@
     @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;600&display=swap');
     
     main {
-        max-width: 1500px;
-        margin: 2rem auto;
+        max-width: 1600px;
         padding: 1rem;
         font-family: sans-serif;
         background: #fdfdfd;
@@ -222,6 +222,10 @@
     h1 {
         text-align: center;
         margin-bottom: 1rem;
+    }
+
+    p {
+        font-size: 1.5rem;
     }
 
     .story-scene,
@@ -363,8 +367,8 @@
         padding-right: calc(var(--base-size) * 0.2);
         color: #ACE;
         text-shadow: 
-            -0.11em 0.03em 0 #214893,
-            -0.22em 0.07em 0 #313131;
+            -0.08em 0.03em 0 #214893,
+            -0.16em 0.06em 0 #313131;
     }
     /* Slider itself */
     input[type="range"] {

@@ -111,14 +111,14 @@
 
 <main>
     <div class="LLM-story-results">
-        <div class="story-prompt">
-            <h3>Story Prompt:</h3>
-            <p>{userPrompt}</p>
-        </div>
-        
         <div class="story-text">
             <h2>Story Result:</h2>
             <p>{story}</p>
+        <!-- </div>
+
+        <div class="story-prompt"> -->
+            <h3>Story Prompt:</h3>
+            <p>{userPrompt}</p>
         </div>
         
         <div class="story-image">
@@ -151,8 +151,6 @@
         align-items: flex-start;
         height: auto;
         gap: 1rem;
-        margin-top: 2rem;
-        margin-bottom: 2rem;
         position: absolute;
         left: 0;
         margin-left: 1rem;
@@ -170,7 +168,7 @@
     }
 
     .story-image {
-        width: 420px;
+        width: 100vh;
     }
 
 </style>
