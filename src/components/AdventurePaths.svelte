@@ -24,7 +24,7 @@
             ${storyConfig.sliders.creativity} ..
         Use these to guide the vibe of the story! 
     `;
-    
+
     let imageRealismPrompt = `
         When generating images, our image realism scale is as follows:
         1-100, where 1 is cartoon-style images, and 100 is more realistic.
@@ -110,14 +110,23 @@
 
 
 <main>
-    <h3>Story Prompt:</h3>
-    <p>{userPrompt}</p>
+    <div class="LLM-story-results">
+        <div class="story-prompt">
+            <h3>Story Prompt:</h3>
+            <p>{userPrompt}</p>
+        </div>
+        
+        <div class="story-text">
+            <h2>Story Result:</h2>
+            <p>{story}</p>
+        </div>
+        
+        <div class="story-image">
+            <ImageDisplay {imageUrl} />
+        </div>
+    </div>
 
-    <h2>Story Result:</h2>
-    <p>{story}</p>
-    
     <div class="face-row">
-        <ImageDisplay {imageUrl} />
         <FaceDetection bind:detections bind:this={expressionHistory} />
     </div>
 </main>
@@ -126,6 +135,17 @@
 <style>
     .face-row {
         display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-top: 2rem;
+        margin-right: 2rem;
+    }
+
+    .LLM-story-results {
+        display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: flex-start;
@@ -133,6 +153,25 @@
         gap: 1rem;
         margin-top: 2rem;
         margin-bottom: 2rem;
+        position: absolute;
+        left: 0;
+        margin-left: 1rem;
     }
+
+    .story-prompt,
+    .story-text {
+        border: 2px solid #666;
+        border-radius: 8px;
+        object-fit: contain;
+        text-align: center;
+        width: 300px;
+        height: 400px;
+        overflow-y: scroll;
+    }
+
+    .story-image {
+        width: 420px;
+    }
+
 </style>
 

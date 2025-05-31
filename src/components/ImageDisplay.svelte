@@ -5,7 +5,7 @@
 
 
 <main>
-    <div class="video-container">
+    <div class="image-container">
         {#if imageUrl}
             <img src={imageUrl} alt={alt} loading="lazy" style="max-width: 100%; height: auto; border-radius: 8px;" />
         {:else}
@@ -16,9 +16,8 @@
 
 
 <style>
-    .video-container {
-        width: 450px;
-        min-height: 8rem;
+    .image-container {
+        width: 100%;
         aspect-ratio: 4 / 3;
         border: 2px solid #666;
         border-radius: 8px;

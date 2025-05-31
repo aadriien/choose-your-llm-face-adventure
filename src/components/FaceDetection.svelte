@@ -170,10 +170,6 @@
 
 <style>
     .face-row {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
         height: auto;
         gap: 1rem;
     }
@@ -190,7 +186,7 @@
 
     .video-container {
         position: relative;
-        width: 450px;
+        width: 300px;
         aspect-ratio: 4 / 3;
     }
 
