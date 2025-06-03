@@ -105,6 +105,8 @@
         clearInterval(typingInterval);
 
         let index = 0;
+        // Start collecting expressions WHILE typing
+        expressionHistory?.startContinuousExpressionTracking(); 
 
         typingInterval = setInterval(() => {
             typedStory += text.charAt(index);
@@ -112,22 +114,18 @@
 
             if (index >= text.length) {
                 clearInterval(typingInterval);
+
+                // Wait 5 seconds AFTER typing finishes to launch next steps
+                setTimeout(async () => {
+                    await expressionHistory?.startContinuousExpressionTracking();
+                    await startNextStoryStep();
+                }, 5000);
             }
         }, typingSpeed);
     }
 
-    // When story changes (new text loaded), reset emotion history
-    $: if (fullStory) {
-        expressionHistory?.startContinuousExpressionTracking();
-    }
-
     onMount(() => {
         startNextStoryStep(); 
-
-        // Every 15 seconds, continue story
-        setInterval(() => {
-            startNextStoryStep();
-        }, 15000);
     });
 
     // Scroll to bottom every time story updates
