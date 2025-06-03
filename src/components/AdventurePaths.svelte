@@ -8,7 +8,7 @@
     
     let userPrompt = `
         Start the choose your adventure story! 
-        But keep it BRIEF (only 1-2 sentences). 
+        But keep it BRIEF (only 1 sentence). 
         Don't provide options yet; just set the scene. 
         Only return the story in your message.
     `;
@@ -35,6 +35,8 @@
     `;
 
     let storyBox;
+    let storyChunks = [];
+
     let fullStory = "";
     let typedStory = "";
 
@@ -117,6 +119,7 @@
 
                 // Wait 5 seconds AFTER typing finishes to launch next steps
                 setTimeout(async () => {
+                    storyChunks = [...storyChunks, typedStory];
                     await expressionHistory?.startContinuousExpressionTracking();
                     await startNextStoryStep();
                 }, 5000);
@@ -139,16 +142,20 @@
 
 <main>
     <div class="LLM-story-results">
-        <div class="story-text" bind:this={storyBox}>
-            <h2>Story Result:</h2>
+        <!-- Latest story chunk -->
+        <div class="story-latest">
+            <h2>Latest:</h2>
             <p>{typedStory}</p>
         </div>
 
-        <div class="story-prompt">
-            <h3>Story Prompt:</h3>
-            <p>{userPrompt}</p>
+        <!-- Full scrollable story -->
+        <div class="story-history" bind:this={storyBox}>
+            <h2>Story So Far:</h2>
+            {#each storyChunks as chunk, index}
+                <p><strong>Part {index + 1}:</strong> {chunk}</p>
+            {/each}
         </div>
-        
+
         <div class="story-image">
             <ImageDisplay {imageUrl} />
         </div>
@@ -184,28 +191,35 @@
         margin-left: 1rem;
     }
 
-    .story-prompt,
-    .story-text {
-        font-family: "Courier New", Courier, monospace;
-        font-size: 1.2rem;
-        line-height: 1.6;
-        color: #222; 
-
-        background-color: #f9f6f1; 
-        border: 2px solid #666;
-        border-radius: 8px;
-        object-fit: contain;
-        text-align: center;
-
-        width: 300px;
-        height: 400px;
-        padding: 1.5rem;
-        overflow-y: scroll;
-    }
-
     .story-image {
         width: 90vh;
     }
+
+    .story-latest,
+    .story-history {
+        font-family: "Courier New", Courier, monospace;
+        width: 300px;
+        height: 400px;
+        padding: 1.5rem;
+        object-fit: contain;
+        overflow-y: auto;
+    }
+
+    .story-latest {
+        font-size: 1.2rem;
+        text-align: center;
+        background-color: #fffbe6;
+        border: 2px solid #aaa;
+        border-radius: 8px;
+    }
+
+    .story-history {
+        font-size: 1rem;
+        background-color: #f0f0f0;
+        border: 1px solid #888;
+        border-radius: 8px;
+    }
+
 
 </style>
 
