@@ -187,6 +187,7 @@
     .video-container {
         position: relative;
         width: 300px;
+        margin-bottom: 1rem;
         aspect-ratio: 4 / 3;
     }
 

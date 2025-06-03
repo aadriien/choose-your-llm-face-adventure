@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, afterUpdate } from "svelte";
     import FaceDetection from "./FaceDetection.svelte";
     import LLMQuery, { fetchTextLLM, fetchImageLLM } from "./LLMQuery.svelte"; 
     import ImageDisplay from "./ImageDisplay.svelte";
@@ -33,8 +33,14 @@
         Use this setting (and scale) to create a fun, unique image accordingly:
         —> image realism: ${storyConfig.sliders.image_realism}
     `;
-    
-    let story = "";
+
+    let storyBox;
+    let fullStory = "";
+    let typedStory = "";
+
+    let typingInterval;
+    const typingSpeed = 80;
+
     let imageUrl = "";
 
     let conversationHistory = "";
@@ -62,15 +68,16 @@
 
         if (firstRun) {
             // Initial story setup, no emotion yet
-            story = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
+            fullStory = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
             imageUrl = await fetchImageLLM(
-                story + "\n" + settingsPrompt + "\n" + imageRealismPrompt
+                fullStory + "\n" + settingsPrompt + "\n" + imageRealismPrompt
             );
 
             // Always maintain story context for LLM
-            conversationHistory += story + "\n\n";
+            conversationHistory += fullStory + "\n\n";
 
             firstRun = false;
+            startTyping(fullStory);
             return;
         }
 
@@ -84,39 +91,62 @@
             ${instructions}
         `;
 
-        story = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
+        fullStory = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
         imageUrl = await fetchImageLLM(
-            story + "\n" + settingsPrompt + "\n" + imageRealismPrompt
+            fullStory + "\n" + settingsPrompt + "\n" + imageRealismPrompt
         );
 
-        conversationHistory += story + "\n\n";
+        conversationHistory += fullStory + "\n\n";
+        startTyping(fullStory);
+    }
+
+    function startTyping(text) {
+        typedStory = "";
+        clearInterval(typingInterval);
+
+        let index = 0;
+
+        typingInterval = setInterval(() => {
+            typedStory += text.charAt(index);
+            index++;
+
+            if (index >= text.length) {
+                clearInterval(typingInterval);
+            }
+        }, typingSpeed);
     }
 
     // When story changes (new text loaded), reset emotion history
-    $: if (story) {
+    $: if (fullStory) {
         expressionHistory?.startContinuousExpressionTracking();
     }
 
     onMount(() => {
         startNextStoryStep(); 
 
-        // Every 10 seconds, continue story
+        // Every 15 seconds, continue story
         setInterval(() => {
             startNextStoryStep();
-        }, 10000);
+        }, 15000);
     });
 
+    // Scroll to bottom every time story updates
+    afterUpdate(() => {
+        if (storyBox) {
+            storyBox.scrollTop = storyBox.scrollHeight;
+        }
+    });
 </script>
 
 
 <main>
     <div class="LLM-story-results">
-        <div class="story-text">
+        <div class="story-text" bind:this={storyBox}>
             <h2>Story Result:</h2>
-            <p>{story}</p>
-        <!-- </div>
+            <p>{typedStory}</p>
+        </div>
 
-        <div class="story-prompt"> -->
+        <div class="story-prompt">
             <h3>Story Prompt:</h3>
             <p>{userPrompt}</p>
         </div>
@@ -158,17 +188,25 @@
 
     .story-prompt,
     .story-text {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: #222; 
+
+        background-color: #f9f6f1; 
         border: 2px solid #666;
         border-radius: 8px;
         object-fit: contain;
         text-align: center;
+
         width: 300px;
         height: 400px;
+        padding: 1.5rem;
         overflow-y: scroll;
     }
 
     .story-image {
-        width: 100vh;
+        width: 90vh;
     }
 
 </style>
