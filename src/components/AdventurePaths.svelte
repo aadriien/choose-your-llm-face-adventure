@@ -46,6 +46,7 @@
     let imageUrl = "";
 
     let conversationHistory = "";
+    let showHistory = false;
 
     let detections = {};
     let expressionHistory;
@@ -142,19 +143,37 @@
 
 <main>
     <div class="LLM-story-results">
-        <!-- Latest story chunk -->
-        <div class="story-latest">
-            <h2>Latest:</h2>
-            <p>{typedStory}</p>
-        </div>
+        <div class="story-text">
+            <!-- Latest story chunk -->
+            <div class="story-latest">
+                <h2>Latest:</h2>
+                <p>{typedStory}</p>
+            </div>
 
-        <!-- Full scrollable story -->
-        <div class="story-history" bind:this={storyBox}>
-            <h2>Story So Far:</h2>
-            {#each storyChunks as chunk, index}
-                <p><strong>Part {index + 1}:</strong> {chunk}</p>
-            {/each}
-        </div>
+            <!-- Full scrollable story -->
+            <!-- <div class="story-history" bind:this={storyBox}>
+                <h2>Story So Far:</h2>
+                {#each storyChunks as chunk, index}
+                    <p><strong>Part {index + 1}:</strong> {chunk}</p>
+                {/each}
+            </div> -->
+
+            <div class="story-history-toggle" on:click={() => showHistory = !showHistory}>
+                <strong>{showHistory ? "Hide Story Log" : "Show Story Log"}</strong>
+            
+                {#if showHistory}
+                    <div class="story-history-content" bind:this={storyBox}>
+                        {#if storyChunks.length === 0}
+                            <p><em>No story yet. Start the adventure!</em></p>
+                        {:else}
+                            {#each storyChunks as chunk, index}
+                                <p><strong>Part {index + 1}:</strong> {chunk}</p>
+                            {/each}
+                        {/if}
+                    </div>
+                {/if}
+            </div>
+        </div>  
 
         <div class="story-image">
             <ImageDisplay {imageUrl} />
@@ -191,6 +210,15 @@
         margin-left: 1rem;
     }
 
+    .story-text {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        width: 300px;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
     .story-image {
         width: 90vh;
     }
@@ -198,7 +226,7 @@
     .story-latest,
     .story-history {
         font-family: "Courier New", Courier, monospace;
-        width: 300px;
+        max-width: 300px;
         height: 400px;
         padding: 1.5rem;
         object-fit: contain;
@@ -218,6 +246,28 @@
         background-color: #f0f0f0;
         border: 1px solid #888;
         border-radius: 8px;
+    }
+
+    .story-history-toggle {
+        font-family: "Courier New", Courier, monospace;
+        max-width: 300px;
+        max-height: 150px;
+        overflow-y: auto;
+        padding: 1rem;
+        background-color: #f5f5f5;
+        border: 2px solid #888;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .story-history-toggle:hover {
+        background-color: #eaeaea;
+    }
+
+    .story-history-content {
+        font-size: 0.9rem;
+        margin-top: 1rem;
     }
 
 
