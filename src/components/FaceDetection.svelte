@@ -155,7 +155,7 @@
 
 
 <main>
-    <div class="face-row">
+    <div class="face-wrapper">
         <div class="video-container">
             <!-- svelte-ignore a11y-media-has-caption -->
             <video bind:this={videoElement} autoplay playsinline></video>
@@ -177,17 +177,18 @@
 
 
 <style>
-    .face-row {
+    .face-wrapper {
         width: 300px;
-        height: auto;
-        gap: 1rem;
-        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .video-container,
     .expression-box {
         height: auto;
-        min-height: 8rem;
+        min-height: 5rem;
         border: 2px solid #666;
         border-radius: 8px;
         object-fit: contain;
@@ -197,24 +198,20 @@
     .video-container {
         position: relative;
         width: 300px;
-        margin-bottom: 1rem;
         aspect-ratio: 4 / 3;
     }
 
     .expression-box {
-        display: flex;
-        flex-wrap: wrap;
         width: 100%;
-        height: 20px;
+        max-height: 40px;
         background: rgba(0 0 0 / 0.75);
         color: white;
         font-family: monospace;
         font-size: 0.85rem;
+        line-height: 1;
+        text-align: center;
         border-radius: 0 0 12px 12px;
-        justify-content: center;
-        align-items: center;
         padding: 0.5rem 1rem;
-        gap: 1rem;
         overflow: hidden;
         white-space: nowrap;
         box-sizing: border-box;

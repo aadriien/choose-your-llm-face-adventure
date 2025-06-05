@@ -17,18 +17,17 @@
 
 <style>
     img {
-        width: 100%; 
-        height: auto; 
+        width: 100%;
+        max-height: 100%;
+        object-fit: cover;
     }
 
     .image-container {
         width: 100%;
-        aspect-ratio: 4 / 3;
-        border: 2px solid #666;
-        border-radius: 8px;
-        text-align: center;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
+        overflow: hidden;
     }
 </style>

@@ -230,14 +230,15 @@
 
 <style>
     .face-row {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
         position: absolute;
         top: 0;
         right: 0;
         margin-top: 2rem;
         margin-right: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 1000;
     }
 
     .LLM-story-results {
@@ -262,7 +263,12 @@
     }
 
     .story-image {
-        width: 100vh;
+        position: relative;
+        width: 900px;
+        height: 600px;
+        border: 2px solid #666;
+        border-radius: 8px;
+        overflow: hidden; 
     }
 
     .story-latest,
