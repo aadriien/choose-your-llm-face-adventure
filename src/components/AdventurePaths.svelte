@@ -131,6 +131,9 @@
             ${conversationHistory}
             The user reacted to the previous scene with these expressions:
             \n${formattedEmotions}\n
+            Use these emotions to shape how the story continues. 
+            Reflect user's feelings by adapting tone, mood, and events accordingly. 
+            Make the story respond emotionally to the user's expressions.
             ${instructions}
         `;
 
