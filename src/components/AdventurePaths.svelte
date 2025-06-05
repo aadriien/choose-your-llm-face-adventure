@@ -234,7 +234,7 @@
         top: 0;
         right: 0;
         margin-top: 2rem;
-        margin-right: 2rem;
+        margin-right: 1rem;
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -246,25 +246,31 @@
         flex-direction: row;
         justify-content: center;
         align-items: flex-start;
+        width: 100%;
         height: auto;
         gap: 1rem;
         position: absolute;
+        top: 0; 
         left: 0;
+        margin-top: 2rem;
         margin-left: 1rem;
+        box-sizing: border-box;
     }
 
     .story-text {
         display: flex;
         flex-direction: column;
-        box-sizing: border-box;
+        flex-shrink: 0;
         width: 300px;
         gap: 1rem;
         margin-bottom: 2rem;
+        box-sizing: border-box;
     }
 
     .story-image {
         position: relative;
-        width: 900px;
+        flex-grow: 1;
+        min-width: 600px;
         height: 600px;
         border: 2px solid #666;
         border-radius: 8px;
