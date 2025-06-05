@@ -103,6 +103,14 @@
         return averages;
     }
 
+    function getTopExpressions(expressions) {
+        if (!expressions) return [];
+
+        return Object.entries(expressions)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 6);
+    }
+
     export async function collectExpressions(duration = 5000) {
         // Reset expressions to start fresh
         expressionHistory = [];  
@@ -155,11 +163,11 @@
         </div>
 
         <div class="expression-box">
-            <h2>Detected expressions:</h2>
+            <!-- <h2>Detected expressions:</h2> -->
                 {#if detections}
-                    <ul>
-                        {#each Object.entries(detections) as [expression, score]}
-                        <li>{expression}: {score.toFixed(2)}</li>
+                    <ul class="emotion-list">
+                        {#each getTopExpressions(detections) as [expression, score]}
+                        <li class="emotion">{expression}: {(score * 100).toFixed(0)}%</li>
                         {/each}
                     </ul>
                 {/if}
@@ -170,8 +178,10 @@
 
 <style>
     .face-row {
+        width: 300px;
         height: auto;
         gap: 1rem;
+        z-index: 1000;
     }
 
     .video-container,
@@ -192,7 +202,22 @@
     }
 
     .expression-box {
-        width: 300px;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        height: 20px;
+        background: rgba(0 0 0 / 0.75);
+        color: white;
+        font-family: monospace;
+        font-size: 0.85rem;
+        border-radius: 0 0 12px 12px;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        gap: 1rem;
+        overflow: hidden;
+        white-space: nowrap;
+        box-sizing: border-box;
     }
 
     .video-container video,
@@ -205,9 +230,20 @@
         border-radius: 8px;
     }
 
-    ul {
+    .emotion-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
         list-style: none;
+        justify-content: center;
         padding: 0;
+        margin: 0;
+    }
+
+    .emotion {
+        flex: 0 0 45%;
+        white-space: nowrap;
+        text-align: center;
     }
 
 </style>

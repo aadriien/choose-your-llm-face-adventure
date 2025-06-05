@@ -262,7 +262,7 @@
     }
 
     .story-image {
-        width: 90vh;
+        width: 100vh;
     }
 
     .story-latest,
