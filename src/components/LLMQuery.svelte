@@ -4,12 +4,21 @@
 
     // Logic for fetching story text
     export async function fetchTextLLM(userPrompt) {
+        // const systemMessage = `
+        //     You are a master storyteller who likes to keep your audience engaged.
+        //     You are also narrating a Choose-Your-Adventure style game.
+        //     This means you build a story around your audience's choices.
+        //     You provide them with options at each turn, and adjust from there.
+        // `;
         const systemMessage = `
-            You are a master storyteller who likes to keep your audience engaged.
-            You are also narrating a Choose-Your-Adventure style game.
-            This means you build a story around your audience's choices.
-            You provide them with options at each turn, and adjust from there.
+            You are a master storyteller creating a Choose-Your-Adventure game.
+            Your top priority is to surprise, delight, and occasionally shock the reader.
+            Do NOT follow clichés. Do NOT use predictable plots.
+            Invent strange characters, bizarre twists, and imaginative details.
+            You are ALLOWED and ENCOURAGED to be weird, surreal, or dreamlike.
+            Be highly creative unless told otherwise.
         `;
+
 
         const TEXT_PARAMS = {
             "model": "mistral",

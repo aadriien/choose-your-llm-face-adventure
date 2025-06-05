@@ -13,25 +13,61 @@
         Only return the story in your message.
     `;
 
+    // let settingsPrompt = `
+    //     Here are the settings we're using for this story:
+    //     —> genre: ${storyConfig.genre} ..
+    //     —> setting: ${storyConfig.setting} ..
+    //     —> tone: ${storyConfig.tone} ..
+    //     —> silliness (scale 1-100, where 100 is VERY silly): 
+    //         ${storyConfig.sliders.silliness} ..
+    //     —> creativity (scale 1-100, where 100 is VERY unique): 
+    //         ${storyConfig.sliders.creativity} ..
+    //     Use these to guide the vibe of the story! 
+    // `;
+
     let settingsPrompt = `
-        Here are the settings we're using for this story:
-        —> genre: ${storyConfig.genre} ..
-        —> setting: ${storyConfig.setting} ..
-        —> tone: ${storyConfig.tone} ..
-        —> silliness (scale 1-100, where 100 is VERY silly): 
-            ${storyConfig.sliders.silliness} ..
-        —> creativity (scale 1-100, where 100 is VERY unique): 
-            ${storyConfig.sliders.creativity} ..
-        Use these to guide the vibe of the story! 
+        The story must match this creative configuration:
+        - Genre: ${storyConfig.genre}
+        - Setting: ${storyConfig.setting}
+        - Tone: ${storyConfig.tone}
+        - Silliness level: ${storyConfig.sliders.silliness}/100
+        - Creativity level: ${storyConfig.sliders.creativity}/100 
+            → match this with unpredictable and highly inventive ideas.
     `;
 
-    let imageRealismPrompt = `
-        When generating images, our image realism scale is as follows:
-        1-100, where 1 is cartoon-style images, and 100 is more realistic.
-        So if the number is below 50, create a CARTOON image, NOT a real one.
+    if (storyConfig.sliders.creativity > 60) {
+        settingsPrompt += `
+            Use unusual metaphors, surreal events, and imaginative world-building.
+            Break genre norms if it adds surprise.
+        `;
+    }
 
-        Use this setting (and scale) to create a fun, unique image accordingly:
-        —> image realism: ${storyConfig.sliders.image_realism}
+    // let imageRealismPrompt = `
+    //     When generating images, our image realism scale is as follows:
+    //     1-100, where 1 is cartoon-style images, and 100 is more realistic.
+    //     So if the number is below 50, create a CARTOON image, NOT a real one.
+
+    //     Use this setting (and scale) to create a fun, unique image accordingly:
+    //     —> image realism: ${storyConfig.sliders.image_realism}
+    // `;
+
+    let imageRealismPrompt = `
+        Based on the story, generate an image that matches this style:
+        - Style: 
+            ${
+                storyConfig.sliders.image_realism < 50 
+                ? 
+                "cartoon or animated illustration" 
+                : 
+                "realistic or photo-style"
+            }
+        - Do NOT generate photo-realistic output if style is cartoon.
+        - Be visually imaginative, especially if cartoon-style is selected.
+    `;
+
+    let lengthReminder = `
+        ONLY RETURN ONE SINGLE, BRIEF SENTENCE. NO MORE.
+        If your response includes more than one sentence, the story will be rejected. 
     `;
 
     let storyBox;
@@ -71,9 +107,12 @@
 
         if (firstRun) {
             // Initial story setup, no emotion yet
-            fullStory = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
+            fullStory = await fetchTextLLM(
+                userPrompt + "\n" + settingsPrompt + "\n" + lengthReminder
+            );
             imageUrl = await fetchImageLLM(
-                fullStory + "\n" + settingsPrompt + "\n" + imageRealismPrompt
+                fullStory + "\n" + settingsPrompt + "\n" + 
+                imageRealismPrompt + "\n" + lengthReminder
             );
 
             // Always maintain story context for LLM
@@ -94,9 +133,12 @@
             ${instructions}
         `;
 
-        fullStory = await fetchTextLLM(userPrompt + "\n" + settingsPrompt);
+        fullStory = await fetchTextLLM(
+            userPrompt + "\n" + settingsPrompt + "\n" + lengthReminder
+        );
         imageUrl = await fetchImageLLM(
-            fullStory + "\n" + settingsPrompt + "\n" + imageRealismPrompt
+            fullStory + "\n" + settingsPrompt + "\n" + 
+            imageRealismPrompt + "\n" + lengthReminder
         );
 
         conversationHistory += fullStory + "\n\n";
@@ -146,7 +188,7 @@
         <div class="story-text">
             <!-- Latest story chunk -->
             <div class="story-latest">
-                <h2>Latest:</h2>
+                <h2>And then..</h2>
                 <p>{typedStory}</p>
             </div>
 
@@ -231,6 +273,11 @@
         padding: 1.5rem;
         object-fit: contain;
         overflow-y: auto;
+    }
+
+    .story-latest h2 {
+        font-size: 1.4rem;
+        margin: 0;
     }
 
     .story-latest {
