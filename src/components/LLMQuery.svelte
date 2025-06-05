@@ -59,8 +59,8 @@
     // Logic for fetching story image
     export async function fetchImageLLM(prompt, params = {}) {
         const IMAGE_PARAMS = {
-            width: 512,
-            height: 384,
+            width: 800,
+            height: 600,
             private: "true",
             nologo: "true",
             safe: "true"

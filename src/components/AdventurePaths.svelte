@@ -55,7 +55,7 @@
         Based on the story, generate an image that matches this style:
         - Style: 
             ${
-                storyConfig.sliders.image_realism < 50 
+                storyConfig.sliders.image_realism < 70 
                 ? 
                 "cartoon or animated illustration" 
                 : 
@@ -63,6 +63,7 @@
             }
         - Do NOT generate photo-realistic output if style is cartoon.
         - Be visually imaginative, especially if cartoon-style is selected.
+        - Do NOT generate anything creepy or scary.
     `;
 
     let lengthReminder = `
@@ -253,8 +254,8 @@
         top: 0; 
         left: 0;
         margin-top: 2rem;
-        margin-left: 1rem;
         box-sizing: border-box;
+        padding: 0 1rem;
     }
 
     .story-text {

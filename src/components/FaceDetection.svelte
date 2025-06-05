@@ -182,7 +182,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
     }
 
     .video-container,
@@ -190,7 +189,6 @@
         height: auto;
         min-height: 5rem;
         border: 2px solid #666;
-        border-radius: 8px;
         object-fit: contain;
         text-align: center;
     }
@@ -198,7 +196,9 @@
     .video-container {
         position: relative;
         width: 300px;
+        border-radius: 12px 12px 0 0;
         aspect-ratio: 4 / 3;
+        box-sizing: border-box;
     }
 
     .expression-box {
@@ -224,7 +224,7 @@
         left: 0;
         width: 100%;
         height: auto;
-        border-radius: 8px;
+        border-radius: 12px 12px 0 0;
     }
 
     .emotion-list {
