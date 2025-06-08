@@ -196,7 +196,7 @@
     .video-container {
         position: relative;
         width: 300px;
-        border-radius: 12px 12px 0 0;
+        border-radius: 8px 8px 0 0;
         aspect-ratio: 4 / 3;
         box-sizing: border-box;
     }
@@ -224,7 +224,7 @@
         left: 0;
         width: 100%;
         height: auto;
-        border-radius: 12px 12px 0 0;
+        border-radius: 8px 8px 0 0;
     }
 
     .emotion-list {

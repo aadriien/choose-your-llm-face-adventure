@@ -13,18 +13,6 @@
         Only return the story in your message.
     `;
 
-    // let settingsPrompt = `
-    //     Here are the settings we're using for this story:
-    //     —> genre: ${storyConfig.genre} ..
-    //     —> setting: ${storyConfig.setting} ..
-    //     —> tone: ${storyConfig.tone} ..
-    //     —> silliness (scale 1-100, where 100 is VERY silly): 
-    //         ${storyConfig.sliders.silliness} ..
-    //     —> creativity (scale 1-100, where 100 is VERY unique): 
-    //         ${storyConfig.sliders.creativity} ..
-    //     Use these to guide the vibe of the story! 
-    // `;
-
     let settingsPrompt = `
         The story must match this creative configuration:
         - Genre: ${storyConfig.genre}
@@ -41,15 +29,6 @@
             Break genre norms if it adds surprise.
         `;
     }
-
-    // let imageRealismPrompt = `
-    //     When generating images, our image realism scale is as follows:
-    //     1-100, where 1 is cartoon-style images, and 100 is more realistic.
-    //     So if the number is below 50, create a CARTOON image, NOT a real one.
-
-    //     Use this setting (and scale) to create a fun, unique image accordingly:
-    //     —> image realism: ${storyConfig.sliders.image_realism}
-    // `;
 
     let imageRealismPrompt = `
         Based on the story, generate an image that matches this style:
@@ -166,7 +145,7 @@
 
                 // Wait 5 seconds AFTER typing finishes to launch next steps
                 setTimeout(async () => {
-                    storyChunks = [...storyChunks, typedStory];
+                    storyChunks = [...storyChunks, { text: typedStory, image: imageUrl }];
                     await expressionHistory?.startContinuousExpressionTracking();
                     await startNextStoryStep();
                 }, 5000);
@@ -192,17 +171,13 @@
         <div class="story-text">
             <!-- Latest story chunk -->
             <div class="story-latest">
-                <h2>And then..</h2>
+                {#if firstRun}
+                    <h2>A story begins..</h2>
+                {:else}
+                    <h2>And then..</h2>
+                {/if}
                 <p>{typedStory}</p>
             </div>
-
-            <!-- Full scrollable story -->
-            <!-- <div class="story-history" bind:this={storyBox}>
-                <h2>Story So Far:</h2>
-                {#each storyChunks as chunk, index}
-                    <p><strong>Part {index + 1}:</strong> {chunk}</p>
-                {/each}
-            </div> -->
 
             <div class="story-history-toggle" on:click={() => showHistory = !showHistory}>
                 <strong>{showHistory ? "Hide Story Log" : "Show Story Log"}</strong>
@@ -212,8 +187,14 @@
                         {#if storyChunks.length === 0}
                             <p><em>No story yet. Start the adventure!</em></p>
                         {:else}
+                            <!-- Display all story chunks AND images -->
                             {#each storyChunks as chunk, index}
-                                <p><strong>Part {index + 1}:</strong> {chunk}</p>
+                                <div class="story-log-entry">
+                                    <p><strong>Part {index + 1}:</strong> {chunk.text}</p>
+                                    {#if chunk.image}
+                                        <img src={chunk.image} alt={`Scene image ${index + 1}`} class="story-log-image" />
+                                    {/if}
+                                </div>
                             {/each}
                         {/if}
                     </div>
@@ -275,7 +256,7 @@
         position: relative;
         flex-grow: 1;
         min-width: 600px;
-        height: 600px;
+        height: 650px;
         border: 2px solid #666;
         border-radius: 8px;
         overflow: hidden; 
@@ -333,6 +314,16 @@
         margin-top: 1rem;
     }
 
+    .story-log-entry {
+        margin-bottom: 1rem;
+    }
+
+    .story-log-image {
+        width: 100%;
+        max-width: 280px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
 
 </style>
 
