@@ -91,8 +91,9 @@
             <legend>The Scene</legend>
 
             <section class="input-group">
-                <label>Genre</label>
+                <label for="genre">Genre</label>
                 <input
+                    id="genre"
                     type="text"
                     placeholder="e.g. Sci-fi"
                     bind:value={genre}
@@ -101,14 +102,15 @@
                 />
                 <datalist id="genres-options">
                 {#each genres as g}
-                    <option value={g} />
+                    <option value={g}>{g}</option>
                 {/each}
                 </datalist>
             </section>
             
             <section class="input-group">
-                <label>Setting</label>
+                <label for="setting">Setting</label>
                 <input
+                    id="setting"
                     type="text"
                     placeholder="e.g. Hidden Civilization"
                     bind:value={setting}
@@ -117,14 +119,15 @@
                 />
                 <datalist id="settings-options">
                 {#each settings as s}
-                    <option value={s} />
+                    <option value={s}>{s}</option>
                 {/each}
                 </datalist>
             </section>
         
             <section class="input-group">
-                <label>Tone</label>
+                <label for="tone">Tone</label>
                 <input
+                    id="tone"
                     type="text"
                     placeholder="e.g. Whimsical"
                     bind:value={tone}
@@ -133,7 +136,7 @@
                 />
                 <datalist id="tones-options">
                 {#each tones as t}
-                    <option value={t} />
+                    <option value={t}>{t}</option>
                 {/each}
                 </datalist>
             </section>
@@ -172,30 +175,30 @@
             <legend>Vibe Check</legend>
 
             <div class="slider-group">
-                <label 
+                <label for="silliness"
                     orient="horizontal" 
                     data-before="grounded fit" 
                     data-after="weird fun"
                 >Silliness</label>
-                <input type="range" min="0" max="100" bind:value={silliness}/>
+                <input id="silliness" type="range" min="0" max="100" bind:value={silliness}/>
             </div>
             
             <div class="slider-group">
-                <label 
+                <label for="creativity"
                     orient="horizontal" 
                     data-before="classic feel" 
                     data-after="very unique"
                 >Creativity</label>
-                <input type="range" min="0" max="100" bind:value={creativity} />
+                <input id="creativity" type="range" min="0" max="100" bind:value={creativity} />
             </div>
             
             <div class="slider-group">
-                <label 
+                <label for="image_realism"
                     orient="horizontal" 
                     data-before="cartoon style" 
                     data-after="natural look"
                 >Image Realism</label>
-                <input type="range" min="0" max="100" bind:value={image_realism} />
+                <input id="image_realism" type="range" min="0" max="100" bind:value={image_realism} />
             </div>
         </fieldset>
     </div>
@@ -342,12 +345,6 @@
             #313131, #2F343F, #283F6B, 
             #214893, #1A52BC, #2769D3, 
             #3E87DC, #55A5E6, #6FC5F0;
-    }
-    html { font-size: 1em; }
-    body {
-        color: #BBB;
-        background-color: #444;
-        text-align: center;
     }
     fieldset {
         border: var(--border-color) solid var(--border-width);

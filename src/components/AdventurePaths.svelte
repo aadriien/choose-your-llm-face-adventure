@@ -179,7 +179,7 @@
                 <p>{typedStory}</p>
             </div>
 
-            <div class="story-history-toggle" on:click={() => showHistory = !showHistory}>
+            <button class="story-history-toggle" on:click={() => showHistory = !showHistory}>
                 <strong>{showHistory ? "Hide Story Log" : "Show Story Log"}</strong>
             
                 {#if showHistory}
@@ -199,7 +199,7 @@
                         {/if}
                     </div>
                 {/if}
-            </div>
+            </button>
         </div>  
 
         <div class="story-image">
@@ -262,8 +262,7 @@
         overflow: hidden; 
     }
 
-    .story-latest,
-    .story-history {
+    .story-latest {
         font-family: "Courier New", Courier, monospace;
         max-width: 300px;
         height: 400px;
@@ -282,13 +281,6 @@
         text-align: center;
         background-color: #fffbe6;
         border: 2px solid #aaa;
-        border-radius: 8px;
-    }
-
-    .story-history {
-        font-size: 1rem;
-        background-color: #f0f0f0;
-        border: 1px solid #888;
         border-radius: 8px;
     }
 

@@ -16,6 +16,6 @@
         "vite": "^6.3.5"
     },
     "dependencies": {
-        "face-api.js": "^0.20.0"
+        "face-api.js": "^0.22.2"
     }
 }
